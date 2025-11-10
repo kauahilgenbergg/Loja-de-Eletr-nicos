@@ -1,0 +1,43 @@
+.app-footer {
+  /* Faz o rodapé 'grudar' no final da página */
+  margin-top: auto;
+  
+  background-color: #222;
+  color: #ccc;
+  padding: 0.05rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #007bff; /* Ou qualquer cor de destaque da sua loja */
+}
+
+.footer-copy {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
