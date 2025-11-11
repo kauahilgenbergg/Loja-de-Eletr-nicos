@@ -19,8 +19,8 @@ function Header() {
         <Link to="/about">Sobre Nós</Link>
         
         {/* (Zanon) Links para Carrinho e Desejos */}
-        <Link to="/wishlist" className="nav-icon">❤️</Link>
-        <Link to="/cart" className="nav-icon">🛒</Link>
+        <Link to="/Wishlist" className="nav-icon">❤️</Link>
+        <Link to="/Cart" className="nav-icon">🛒</Link>
         
         {/* (Kauã) Link para Perfil/Login */}
         <Link to="/profile" className="nav-icon">👤</Link>

@@ -16,8 +16,10 @@ import Home from './pages/Home';
 //import Register from './pages/Auth/Register';
 //import Profile from './pages/Profile/Profile';
 //import Orders from './pages/Profile/Orders';
-//import Wishlist from './pages/Checkout/Wishlist';
-//import Cart from './pages/Checkout/Cart';
+import Wishlist from './pages/checkout/Wishlist';
+import Cart from './pages/checkout/Cart';
+
+import { CartProvider } from './context/CartContext';
 
 import './App.css';
 
@@ -29,7 +31,9 @@ function App() {
       <main className="app-content">
         <Routes>
           {/* Páginas Principais */}
-          <Route path="/" element={<Home />} />                  
+          <Route path="/" element={<Home />} />
+          <Route path="/Wishlist" element={<Wishlist />} />
+          <Route path="/Cart" element={<Cart />} />                    
         </Routes>
       </main>
 
