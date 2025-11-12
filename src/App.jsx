@@ -18,6 +18,7 @@ import Home from './pages/Home';
 //import Orders from './pages/Profile/Orders';
 import Wishlist from './pages/checkout/Wishlist';
 import Cart from './pages/checkout/Cart';
+import Catalog from './pages/Catalog';
 
 import { CartProvider } from './context/CartContext';
 
@@ -33,7 +34,8 @@ function App() {
           {/* Páginas Principais */}
           <Route path="/" element={<Home />} />
           <Route path="/Wishlist" element={<Wishlist />} />
-          <Route path="/Cart" element={<Cart />} />                    
+          <Route path="/Cart" element={<Cart />} />      
+          <Route path="/Catalog" element={<Catalog />} />              
         </Routes>
       </main>
 

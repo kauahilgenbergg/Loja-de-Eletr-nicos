@@ -1,0 +1,99 @@
+/* Container principal de cada item no carrinho */
+.cart-item {
+  display: flex;
+  align-items: center; /* Alinha a imagem e os detalhes verticalmente */
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  gap: 1.5rem; /* Espaço entre a imagem e os detalhes */
+}
+
+/* Imagem do produto */
+.cart-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Container dos detalhes (nome, preço, controles) */
+.item-details {
+  flex-grow: 1; /* Faz esta div ocupar o espaço restante */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Espaço entre os textos (nome, preço, etc) */
+}
+
+.item-details h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.item-details p {
+  margin: 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Estiliza o "Subtotal: R$ XX.XX" */
+.item-details p:last-of-type {
+  font-weight: bold;
+  color: #000;
+}
+
+/* Container dos botões + e - e a quantidade */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Espaço entre os botões e o número */
+  margin-top: 0.5rem;
+}
+
+/* Botões de + e - */
+.quantity-controls button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 50%; /* Botões redondos */
+  background-color: #f9f9f9;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quantity-controls button:hover {
+  background-color: #eee;
+}
+
+/* Número da quantidade */
+.quantity-controls span {
+  font-size: 1.1rem;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Botão de "Remover" */
+.remove-btn {
+  background: none;
+  border: none;
+  color: #d9534f; /* Cor vermelha para "perigo" */
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 0.5rem;
+  text-align: left; /* Alinha com o resto do texto */
+  width: fit-content; /* Faz o botão ter o tamanho do texto */
+}
+
+.remove-btn:hover {
+  text-decoration: underline;
+  color: #a94442; /* Vermelho mais escuro */
+}

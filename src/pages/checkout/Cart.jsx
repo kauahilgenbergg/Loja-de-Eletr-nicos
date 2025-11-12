@@ -1,21 +1,52 @@
-import { useCart } from "../../context/CartContext";
+import React from 'react';
+import { useCart } from '../../context/CartContext';
+import CartItem from '../../components/product/CartItem.jsx'; 
+// (Ou o caminho correto para seu CartItem)
 
 export default function Cart() {
-  const { cart } = useCart();
+  const { 
+    cartItems,
+    cartSubtotal,
+    isLoading,
+    error,
+    clearCart,    // <-- NOVO
+    isUpdating    // <-- NOVO
+  } = useCart();
 
-  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+  if (isLoading) {
+    return <p>Carregando carrinho...</p>;
+  }
+
+  if (error) {
+    return <p>Erro ao carregar: {error.message}</p>;
+  }
 
   return (
     <div>
       <h2>🛒 Meu Carrinho</h2>
-      {cart.length === 0 ? (
+      {cartItems.length === 0 ? (
         <p>Seu carrinho está vazio.</p>
       ) : (
         <>
-          {cart.map((item) => (
-            <CartItem key={item.id} product={item} />
+          {cartItems.map((item) => (
+            <CartItem 
+              key={item.id} 
+              product={item}
+              // Passar as funções para o CartItem agora é opcional,
+              // já que o CartItem pode pegar direto do useCart()
+            />
           ))}
-          <h3>Total: R$ {total.toFixed(2)}</h3>
+          
+          <h3>Total: R$ {cartSubtotal.toFixed(2)}</h3>
+
+          {/* <-- BOTÃO NOVO ADICIONADO AQUI --> */}
+          <button 
+            className="clear-cart-btn" 
+            onClick={clearCart} 
+            disabled={isUpdating} // Desativa o botão enquanto limpa
+          >
+            {isUpdating ? 'Limpando...' : 'Limpar Carrinho'}
+          </button>
         </>
       )}
     </div>
