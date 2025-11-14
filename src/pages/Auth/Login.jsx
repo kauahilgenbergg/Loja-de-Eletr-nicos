@@ -1,18 +1,44 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css'; 
 
 function Login() {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
-        event.preventDefault(); 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsSubmitting(true);
 
-        console.log("Dados do Login:", { email, password });
+        try {
+            const response = await fetch('/api/users');
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Falha ao buscar usuários');
+            }
 
+            const users = await response.json();
+
+            const foundUser = users.find(
+                (user) => user.email === email && user.password === password
+            );
+
+            if (foundUser) {
+                alert('Login realizado com sucesso!');
+                navigate('/home'); 
+            } else {
+                alert('Email ou senha inválidos.');
+            }
+
+        } catch (error) {
+            console.error('Erro no login:', error);
+            alert(`Erro ao tentar fazer login: ${error.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -39,13 +65,15 @@ function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required 
-                    />
+                   />
                 </div>
 
-                <button type="submit" className="auth-button">Entrar</button>
+                <button type="submit" className="auth-button" disabled={isSubmitting}>
+                    {isSubmitting ? 'Entrando...' : 'Entrar'}
+                </button>
 
                 <p className="auth-link">
-                    Não tem uma conta? <Link to="/register">Cadastre-se</Link>
+                    Não tem uma conta? <Link to="/">Cadastre-se</Link>
                 </p>
             </form>
         </div>

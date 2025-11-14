@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
-
+import { Link, useNavigate } from 'react-router-dom'; 
 import './Auth.css'; 
 
 function Register() {
@@ -8,18 +7,48 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsSubmitting(true); 
 
         if (password !== confirmPassword) {
             alert("As senhas não são iguais!");
+            setIsSubmitting(false); 
             return;
         }
 
         const userData = { name, email, password };
-        console.log("Dados de Registro:", userData);
 
+        try {
+            const response = await fetch('/api/users', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Erro do servidor:", errorText);
+                throw new Error(errorText || 'Falha ao cadastrar');
+            }
+
+            const data = await response.json(); 
+            console.log('Usuário cadastrado:', data);
+
+            alert('Cadastro realizado com sucesso!');
+            navigate('/login'); 
+
+        } catch (error) {
+            console.error('Erro no cadastro:', error);
+            alert(`Erro ao cadastrar: ${error.message}`);
+        } finally {
+            setIsSubmitting(false); 
+        }
     };
 
     return (
@@ -57,7 +86,7 @@ function Register() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required 
-                    />
+                   />
                 </div>
 
                 <div className="form-group">
@@ -71,7 +100,9 @@ function Register() {
                     />
                 </div>
 
-                <button type="submit" className="auth-button">Registrar</button>
+                <button type="submit" className="auth-button" disabled={isSubmitting}>
+                    {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
+                </button>
 
                 <p className="auth-link">
                     Já tem uma conta? <Link to="/login">Faça Login</Link>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// 1. Imports de Layout ATUALIZADOS
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 
@@ -32,9 +31,9 @@ function App() {
       <main className="app-content">
         <Routes>
           {/* Páginas Principais */}
+          <Route path="/" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Cart" element={<Cart />} />      
           <Route path="/Catalog" element={<Catalog />} />    
