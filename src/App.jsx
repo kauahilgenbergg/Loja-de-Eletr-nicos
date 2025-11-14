@@ -14,7 +14,7 @@ import AboutUs from './pages/AboutUs';
 // 3. Imports das Novas Pastas de Páginas
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
-//import Profile from './pages/Profile/Profile';
+import Profile from './pages/profile/Profile';
 //import Orders from './pages/Profile/Orders';
 import Wishlist from './pages/checkout/Wishlist';
 import Cart from './pages/checkout/Cart';
@@ -38,7 +38,8 @@ function App() {
           <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Cart" element={<Cart />} />      
           <Route path="/Catalog" element={<Catalog />} />    
-          <Route path="/about" element={<AboutUs />} />          
+          <Route path="/about" element={<AboutUs />} />   
+          <Route path="/profile" element={<Profile />} />       
         </Routes>
       </main>
 
