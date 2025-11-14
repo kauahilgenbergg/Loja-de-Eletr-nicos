@@ -8,7 +8,7 @@ import Footer from './components/layout/Footer';
 // 2. Imports de Páginas Principais
 import Home from './pages/Home';
 //import Catalog from './pages/Catalog';
-//import AboutUs from './pages/AboutUs';
+import AboutUs from './pages/AboutUs';
 //import ProductDetail from './pages/ProductDetail'; 
 
 // 3. Imports das Novas Pastas de Páginas
@@ -35,7 +35,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Cart" element={<Cart />} />      
-          <Route path="/Catalog" element={<Catalog />} />              
+          <Route path="/Catalog" element={<Catalog />} />    
+          <Route path="/about" element={<AboutUs />} />          
         </Routes>
       </main>
 
