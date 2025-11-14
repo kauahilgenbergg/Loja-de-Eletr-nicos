@@ -12,8 +12,8 @@ import AboutUs from './pages/AboutUs';
 //import ProductDetail from './pages/ProductDetail'; 
 
 // 3. Imports das Novas Pastas de Páginas
-//import Login from './pages/Auth/Login';
-//import Register from './pages/Auth/Register';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 //import Profile from './pages/Profile/Profile';
 //import Orders from './pages/Profile/Orders';
 import Wishlist from './pages/checkout/Wishlist';
@@ -32,6 +32,8 @@ function App() {
       <main className="app-content">
         <Routes>
           {/* Páginas Principais */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
           <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Cart" element={<Cart />} />      
