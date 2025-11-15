@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; 
 import './Auth.css'; 
 
 function Login() {
@@ -7,13 +8,14 @@ function Login() {
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const auth = useAuth(); // 2. Obtenha as funções de autenticação
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/users');
+            const response = await fetch('/api/users'); // Usando o proxy /api/users
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -27,6 +29,9 @@ function Login() {
             );
 
             if (foundUser) {
+                // 3. Salve o usuário no Contexto!
+                auth.login(foundUser); 
+
                 alert('Login realizado com sucesso!');
                 navigate('/home'); 
             } else {
