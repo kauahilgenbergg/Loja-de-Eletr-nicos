@@ -8,14 +8,14 @@ function Login() {
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
-    const auth = useAuth(); // 2. Obtenha as funções de autenticação
+    const auth = useAuth(); 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/users'); // Usando o proxy /api/users
+            const response = await fetch('/api/users'); 
             
             if (!response.ok) {
                 const errorText = await response.text();
