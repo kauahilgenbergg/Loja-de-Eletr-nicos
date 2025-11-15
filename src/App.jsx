@@ -1,11 +1,11 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import { AuthProvider } from './context/AuthContext'; 
+import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
+import MainLayout from './components/layout/MainLayout';
+import AuthLayout from './components/layout/AuthLayout';
 
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
@@ -22,24 +22,23 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="app-container">
-          <Header />
+        <Routes>
+          
+          <Route element={<AuthLayout />}>
+            <Route path="/" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-          <main className="app-content">
-      	    <Routes>
-              <Route path="/" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/Wishlist" element={<Wishlist />} />
-              <Route path="/Cart" element={<Cart />} />      
-              <Route path="/Catalog" element={<Catalog />} />    
-              <Route path="/about" element={<AboutUs />} />   
-              <Route path="/profile" element={<Profile />} />       
-            </Routes>
-          </main>
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/Wishlist" element={<Wishlist />} />
+            <Route path="/Cart" element={<Cart />} />
+            <Route path="/Catalog" element={<Catalog />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
 
-          <Footer />
-        </div>
+        </Routes>
       </CartProvider>
     </AuthProvider>
   );
