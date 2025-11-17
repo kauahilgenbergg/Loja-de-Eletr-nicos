@@ -1,9 +1,7 @@
 // src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
-// SUA URL DA API
-const API_URL = 'https://690d0786a6d92d83e8504357.mockapi.io/produtos';
+// 1. Importe sua 'api' centralizada
+import { api } from '../services/api';
 
 const CartContext = createContext();
 
@@ -15,49 +13,175 @@ export const CartProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // ... (useEffect, toggleWishlist, increaseQty, decreaseQty, removeFromCart, clearCart, clearWishlist - TUDO FICA IGUAL) ...
-  // ... (copie e cole as funções que já existem aqui) ...
+  // Busca inicial (Corrigido)
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get('/produtos'); // Usa api.get()
+        const formattedProducts = response.data.map(p => ({
+          ...p,
+          preco: parseFloat(p.preco),
+          qtdCarrinho: parseInt(p.qtdCarrinho, 10) || 0, 
+        }));
+        setProducts(formattedProducts);
+      } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAllProducts();
+  }, []); 
+
+  // --- ⬇⬇⬇ FUNÇÕES OTIMISTAS CORRIGIDAS ⬇⬇⬇ ---
   
-  // (Exemplo: suas funções otimistas)
-  const toggleWishlist = (id) => { /* ...seu código ... */ };
-  const increaseQty = (id) => { /* ...seu código ... */ };
-  const decreaseQty = (id) => { /* ...seu código ... */ };
-  const removeFromCart = (id) => { /* ...seu código ... */ };
-  const clearCart = () => { /* ...seu código ... */ };
-  const clearWishlist = () => { /* ...seu código ... */ };
+  const toggleWishlist = (id) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    const updatedProduct = { ...product, presenteListaDesejos: !product.presenteListaDesejos };
+    const originalProducts = [...products]; // Backup
+    
+    setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
+    
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
+      .catch(err => {
+        console.error("ERRO: Falha ao atualizar wishlist:", err);
+        setProducts(originalProducts); // Reverte
+      });
+  };
+
+  const increaseQty = (id) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    const newQty = (product.qtdCarrinho || 0) + 1;
+    const updatedProduct = { ...product, qtdCarrinho: newQty, presenteCarrinho: true };
+    const originalProducts = [...products]; // Backup
+
+    setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
+    
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
+      .catch(err => {
+        console.error("ERRO: Falha ao aumentar qtd:", err);
+        setProducts(originalProducts); // Reverte
+      });
+  };
+
+  const decreaseQty = (id) => {
+    const product = products.find(p => p.id === id);
+    if (!product || product.qtdCarrinho <= 0) return; 
+    const newQty = product.qtdCarrinho - 1;
+    const updatedProduct = { ...product, qtdCarrinho: newQty, presenteCarrinho: newQty > 0 };
+    const originalProducts = [...products]; // Backup
+
+    setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
+    
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
+      .catch(err => {
+        console.error("ERRO: Falha ao diminuir qtd:", err);
+        setProducts(originalProducts); // Reverte
+      });
+  };
+
+  const removeFromCart = (id) => {
+    const product = products.find(p => p.id === id);
+    if (!product || product.qtdCarrinho === 0) return;
+    const updatedProduct = { ...product, qtdCarrinho: 0, presenteCarrinho: false };
+    const originalProducts = [...products]; // Backup
+
+    setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
+    
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
+      .catch(err => {
+        console.error("ERRO: Falha ao remover do carrinho:", err);
+        setProducts(originalProducts); // Reverte
+      });
+  };
 
 
-  // --- ⬇⬇⬇ FUNÇÃO NOVA E CORRIGIDA ⬇⬇⬇ ---
-  // Esta função substitui o `clearCart` e `toggleWishlist` no final do pedido
-  // Ela recebe os itens que foram comprados
-  const finalizePurchase = (itemsPurchased) => {
-    const originalProducts = [...products]; // Backup para reverter
+  // --- FUNÇÕES DE LIMPEZA (CORRIGIDAS) ---
+  
+  const clearCart = () => {
+    const originalProducts = [...products];
+    
+    const updatedProducts = products.map(p =>
+      p.qtdCarrinho > 0 ? { ...p, qtdCarrinho: 0, presenteCarrinho: false } : p
+    );
+    setProducts(updatedProducts);
     setIsUpdating(true);
 
-    // Pega os IDs dos itens comprados para facilitar a busca
+    const itemsToClear = originalProducts.filter(p => p.qtdCarrinho > 0);
+    const clearPromises = itemsToClear.map(item => {
+      const updatedItem = { ...item, qtdCarrinho: 0, presenteCarrinho: false };
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedItem);
+    });
+
+    Promise.all(clearPromises)
+      .catch(err => {
+        console.error("Erro ao limpar o carrinho:", err);
+        setProducts(originalProducts); 
+        setError(new Error("Não foi possível limpar o carrinho."));
+      })
+      .finally(() => {
+        setIsUpdating(false);
+      });
+  };
+
+  const clearWishlist = () => {
+    const originalProducts = [...products];
+    
+    const updatedProducts = products.map(p =>
+      p.presenteListaDesejos === true ? { ...p, presenteListaDesejos: false } : p
+    );
+    setProducts(updatedProducts);
+    setIsUpdating(true);
+
+    const itemsToClear = originalProducts.filter(p => p.presenteListaDesejos === true);
+    const clearPromises = itemsToClear.map(item => {
+      const updatedItem = { ...item, presenteListaDesejos: false };
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedItem);
+    });
+
+    Promise.all(clearPromises)
+      .catch(err => {
+        console.error("Erro ao limpar a wishlist:", err);
+        setProducts(originalProducts); 
+        setError(new Error("Não foi possível limpar seus favoritos."));
+      })
+      .finally(() => {
+        setIsUpdating(false);
+      });
+  };
+
+  // --- FUNÇÃO DE FINALIZAR COMPRA (JÁ CORRIGIDA) ---
+  const finalizePurchase = (itemsPurchased) => {
+    const originalProducts = [...products];
+    setIsUpdating(true);
+
     const purchasedIds = new Set(itemsPurchased.map(item => item.id));
 
-    // 1. ATUALIZA A TELA IMEDIATAMENTE (Otimista)
     const updatedProducts = products.map(p => {
-      // Se o ID do produto (p.id) estiver na lista de comprados...
       if (purchasedIds.has(p.id)) {
-        // ...aplica as novas regras de negócio
         return {
           ...p,
           presenteCarrinho: false,
           qtdCarrinho: 0,
-          presenteListaDesejos: false, // Remove dos favoritos
-          presentePedido: true,        // Marca como pedido
-          qtdPedido: p.qtdCarrinho     // Salva a quantidade que foi pedida
+          presenteListaDesejos: false,
+          presentePedido: true,
+          qtdPedido: p.qtdCarrinho
         };
       }
-      // Se não, retorna o produto como estava
       return p;
     });
     setProducts(updatedProducts);
 
-    // 2. MANDA PARA A API EM SEGUNDO PLANO
-    // Cria uma promessa de 'PUT' para cada item comprado
     const purchasePromises = itemsPurchased.map(item => {
       const updatedPayload = {
         ...item,
@@ -65,25 +189,22 @@ export const CartProvider = ({ children }) => {
         qtdCarrinho: 0,
         presenteListaDesejos: false,
         presentePedido: true,
-        qtdPedido: item.qtdCarrinho // 'item.qtdCarrinho' tem a QTD correta
+        qtdPedido: item.qtdCarrinho
       };
-      return axios.put(`${API_URL}/${item.id}`, updatedPayload);
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedPayload);
     });
 
-    // 3. GERENCIA SUCESSO OU ERRO
     Promise.all(purchasePromises)
       .catch(err => {
         console.error("ERRO: Falha ao finalizar a compra de produtos:", err);
-        // DESFAZ a mudança se a API falhar
         setProducts(originalProducts); 
         setError(new Error("Não foi possível registrar seus produtos comprados."));
       })
       .finally(() => {
-        setIsUpdating(false); // Para o spinner
+        setIsUpdating(false);
       });
   };
-  // --- ⬆⬆⬆ FIM DA FUNÇÃO NOVA ⬆⬆⬆ ---
-
 
   // ---- Valores Fornecidos (Sem mudanças) ----
   const cartItems = products.filter(p => p.qtdCarrinho > 0);
@@ -108,7 +229,7 @@ export const CartProvider = ({ children }) => {
         toggleWishlist,
         clearCart,
         clearWishlist,
-        finalizePurchase // <-- 3. EXPONHA A NOVA FUNÇÃO
+        finalizePurchase
       }}
     >
       {children}
