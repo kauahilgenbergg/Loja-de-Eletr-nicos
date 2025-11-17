@@ -1,11 +1,42 @@
 // src/pages/checkout/PaymentForm.jsx
 import React from 'react';
+import './PaymentForm.css'; // Vamos importar nosso novo CSS
 
-// Recebe a nova prop 'isLoading'
+/**
+ * Um componente simples de Spinner e texto para o loading.
+ */
+const LoadingIndicator = () => (
+  <div className="loading-indicator">
+    <div className="spinner"></div> 
+    <span>Finalizando pedido...</span>
+  </div>
+);
+
+// Define as opções de pagamento em um array para facilitar a manutenção
+const paymentMethods = [
+  { 
+    key: 'Pix', 
+    label: 'PIX', 
+    icon: '⚡' // Ícones (emojis) ajudam na identificação rápida
+  },
+  { 
+    key: 'Cartão de Crédito (na entrega)', 
+    label: 'Cartão (na entrega)', 
+    icon: '💳' 
+  },
+  { 
+    key: 'Dinheiro (na entrega)', 
+    label: 'Dinheiro (na entrega)', 
+    icon: '💵' 
+  }
+];
+
 export default function PaymentForm({ onCompleteOrder, isLoading }) {
   
   const handlePaymentSelect = (method) => {
-    // Não faz nada se já estiver carregando
+    // A verificação de 'isLoading' já existe no 'disabled' do botão,
+    // mas é uma boa prática manter aqui para evitar qualquer clique
+    // antes do React desabilitar o botão.
     if (isLoading) return; 
     onCompleteOrder(method);
   };
@@ -15,33 +46,25 @@ export default function PaymentForm({ onCompleteOrder, isLoading }) {
       <h3>💳 Forma de Pagamento</h3>
       <p>Como você prefere pagar?</p>
       
-      <div className="payment-options">
-        <button 
-          className="payment-option-btn"
-          onClick={() => handlePaymentSelect('Pix')}
-          disabled={isLoading} // <-- MUDANÇA AQUI
-        >
-          PIX
-        </button>
-        
-        <button 
-          className="payment-option-btn"
-          onClick={() => handlePaymentSelect('Cartão de Crédito (na entrega)')}
-          disabled={isLoading} // <-- MUDANÇA AQUI
-        >
-          Cartão (na entrega)
-        </button>
-
-        <button 
-          className="payment-option-btn"
-          onClick={() => handlePaymentSelect('Dinheiro (na entrega)')}
-          disabled={isLoading} // <-- MUDANÇA AQUI
-        >
-          Dinheiro (na entrega)
-        </button>
+      {/* Usamos um grid para os cartões de pagamento */}
+      <div className="payment-options-grid">
+        {paymentMethods.map((method) => (
+          <button 
+            key={method.key}
+            className="payment-option-card"
+            onClick={() => handlePaymentSelect(method.key)}
+            // Desabilita o botão se 'isLoading' for verdadeiro
+            disabled={isLoading} 
+          >
+            {/* aria-hidden para emojis decorativos */}
+            <span className="payment-icon" aria-hidden="true">{method.icon}</span>
+            <span className="payment-label">{method.label}</span>
+          </button>
+        ))}
       </div>
       
-      {isLoading && <p>Finalizando pedido...</p>}
+      {/* Mostra o indicador de carregamento se estiver carregando */}
+      {isLoading && <LoadingIndicator />} 
     </div>
   );
 }

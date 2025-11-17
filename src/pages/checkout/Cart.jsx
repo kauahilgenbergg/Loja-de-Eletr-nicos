@@ -7,6 +7,7 @@ import AddressForm from './AddressForm.jsx';
 import PaymentForm from './PaymentForm.jsx';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
+import CheckoutSuccess from './CheckoutSuccess';
 
 // Importe o novo CSS para a página do carrinho
 import './Cart.css';
@@ -110,19 +111,7 @@ export default function Cart() {
   // 👉 ETAPA FINAL — Sucesso
   // -----------------------------------------
   if (checkoutStep === 'success') {
-    return (
-      <div className="checkout-success">
-        <h2>🎉 Pedido Realizado com Sucesso!</h2>
-        <p>Obrigado pela sua compra.</p>
-        <p><strong>Seu pedido será entregue ainda hoje.</strong></p>
-
-        {orderDetails && (
-          <p>
-            Endereço: {orderDetails.rua}, {orderDetails.numero} — {orderDetails.bairro}
-          </p>
-        )}
-      </div>
-    );
+    return <CheckoutSuccess orderDetails={orderDetails} />;
   }
 
   // -----------------------------------------
