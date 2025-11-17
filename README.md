@@ -1,8 +1,20 @@
-Instruções de Instalação
+🛒 Eritrônicos – Loja Online de Eletrônicos
+Projeto simples de uma loja virtual de produtos eletrônicos, usando React e uma API fake para testes.
 
-Abra o terminal na pasta do seu projeto (API-REST-CADASTRO) e rode o seguinte comando para instalar o React Router:
-npm install 
-npm install axios               
-- npm install react-router-dom Isso é essencial para a navegação entre as páginas funcionar.
+🚀 Instalação
+Abra o terminal na pasta do projeto e rode:
+npm install
 npm run dev
-Trabalho Desenvolvido pelos alunos :ERICK ALMEIDA IARENCZUK , KAUA HILGENBERG, GUSTAVO ALVES ZANON RICARDO
+
+A aplicação vai iniciar no endereço mostrado no terminal.
+🔧 Tecnologias
+-React
+-Vite
+-React Router
+-Axios
+-MockAPI
+
+👥 Desenvolvedores
+Erick Almeida Iarenczuk
+Gustavo Alves Zanon Ricardo
+Kauã Hilgenberg
