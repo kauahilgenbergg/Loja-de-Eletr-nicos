@@ -11,9 +11,7 @@ import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
-
 import Profile from './pages/profile/Profile';
-
 import Wishlist from './pages/checkout/Wishlist';
 import Cart from './pages/checkout/Cart';
 import Catalog from './pages/Catalog';
@@ -33,12 +31,11 @@ function App() {
 
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/Wishlist" element={<Wishlist />} />
+            <Route path="/Cart" element={<Cart />} />
+            <Route path="/Catalog" element={<Catalog />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/profile" element={<Profile />} />
-
           </Route>
 
         </Routes>
