@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api'; // ✅ importando o api direto
-import './Home.css'; // 1. Importe o novo CSS
+import './Home.css'; 
 
 function Home() {
   const [products, setProducts] = useState([]);

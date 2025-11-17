@@ -1,47 +1,46 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// 1. Imports de Layout ATUALIZADOS
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
-// 2. Imports de Páginas Principais
+import MainLayout from './components/layout/MainLayout';
+import AuthLayout from './components/layout/AuthLayout';
+
 import Home from './pages/Home';
-//import Catalog from './pages/Catalog';
 import AboutUs from './pages/AboutUs';
-//import ProductDetail from './pages/ProductDetail'; 
-
-// 3. Imports das Novas Pastas de Páginas
-//import Login from './pages/Auth/Login';
-//import Register from './pages/Auth/Register';
-//import Profile from './pages/Profile/Profile';
-//import Orders from './pages/Profile/Orders';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import Profile from './pages/profile/Profile';
 import Wishlist from './pages/checkout/Wishlist';
 import Cart from './pages/checkout/Cart';
 import Catalog from './pages/Catalog';
-
-import { CartProvider } from './context/CartContext';
 
 import './App.css';
 
 function App() {
   return (
-    <div className="app-container">
-      <Header />
-
-      <main className="app-content">
+    <AuthProvider>
+      <CartProvider>
         <Routes>
-          {/* Páginas Principais */}
-          <Route path="/" element={<Home />} />
-          <Route path="/Wishlist" element={<Wishlist />} />
-          <Route path="/Cart" element={<Cart />} />      
-          <Route path="/Catalog" element={<Catalog />} />    
-          <Route path="/about" element={<AboutUs />} />          
-        </Routes>
-      </main>
+          
+          <Route element={<AuthLayout />}>
+            <Route path="/" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-      <Footer />
-    </div>
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/Wishlist" element={<Wishlist />} />
+            <Route path="/Cart" element={<Cart />} />
+            <Route path="/Catalog" element={<Catalog />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+
+        </Routes>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

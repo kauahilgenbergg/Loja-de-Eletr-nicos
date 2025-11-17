@@ -1,33 +1,51 @@
 import React from 'react';
 import "./ProductCard.css";
 
-// 1. Recebe 'product', 'onAddToCart' e 'onToggleWishlist' das props
+/**
+ * Função auxiliar para limpar o preço.
+ * Copiada do Catalog.jsx para garantir que o preço seja
+ * exibido corretamente.
+ */
+const parsePrice = (price) => {
+  if (typeof price === 'number') {
+    return price;
+  }
+  if (typeof price !== 'string') {
+    return 0;
+  }
+  
+  const cleanString = price
+    .replace("R$", "")     
+    .replace(/\./g, "")    
+    .replace(",", ".")     
+    .trim();               
+    
+  const number = parseFloat(cleanString);
+  return isNaN(number) ? 0 : number;
+};
+
+
 export default function ProductCard({ product, onAddToCart, onToggleWishlist }) {
 
-  // 2. A lógica do favorito agora é lida direto do produto!
-  // Não precisamos mais do 'wishlist.some(...)'
   const isFav = product.presenteListaDesejos;
 
-  // 3. Garantir que o preço seja formatado corretamente
-  const price = parseFloat(product.preco).toFixed(2);
+  // 1. CORREÇÃO: Usar a função parsePrice antes do .toFixed()
+  const price = parsePrice(product.preco).toFixed(2);
 
   return (
     <div className="product-card">
-      {/* 4. Corrigido para 'product.imagem' */}
       <img src={product.imagem} alt={product.name} /> 
       
       <h4>{product.name}</h4>
       
-      {/* 5. Corrigido para 'product.preco' (e formatado) */}
-      <p>R$ {price}</p> 
+      {/* 2. O 'price' agora está formatado corretamente */}
+      <p>R$ {price.replace(".", ",")}</p> {/* Opcional: troca ponto por vírgula na exibição */}
       
       <div className="actions">
-        {/* 6. Chama a função 'onAddToCart' recebida via props */}
         <button onClick={onAddToCart}>🛒 Adicionar</button>
         
-        {/* 7. Chama a função 'onToggleWishlist' recebida via props */}
         <button onClick={onToggleWishlist}>
-          {isFav ? "❤️" : "🤍"} {/* Mostra o coração baseado no estado do produto */}
+          {isFav ? "❤️" : "🤍"} 
         </button>
       </div>
     </div>
