@@ -10,8 +10,8 @@ function Header() {
       {/* <SearchBar /> */}
 
       <nav>
-        <Link to="/catalog">Catálogo</Link>
         <Link to="/about">Sobre Nós</Link>
+        <Link to="/catalog">Catálogo</Link>
         <Link to="/Wishlist" className="nav-icon">❤️</Link>
         <Link to="/Cart" className="nav-icon">🛒</Link>
         <Link to="/profile" className="nav-icon">👤</Link>
