@@ -1,8 +1,7 @@
+// src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
-// SUA URL DA API
-const API_URL = 'https://690d0786a6d92d83e8504357.mockapi.io/produtos';
+// 1. Importe sua 'api' centralizada
+import { api } from '../services/api';
 
 const CartContext = createContext();
 
@@ -14,12 +13,12 @@ export const CartProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Busca inicial (Sem mudanças)
+  // Busca inicial (Corrigido)
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(API_URL);
+        const response = await api.get('/produtos'); // Usa api.get()
         const formattedProducts = response.data.map(p => ({
           ...p,
           preco: parseFloat(p.preco),
@@ -27,6 +26,7 @@ export const CartProvider = ({ children }) => {
         }));
         setProducts(formattedProducts);
       } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
         setError(err);
       } finally {
         setIsLoading(false);
@@ -35,10 +35,8 @@ export const CartProvider = ({ children }) => {
     fetchAllProducts();
   }, []); 
 
-  // --- Funções Otimistas (Rápidas) ---
+  // --- ⬇⬇⬇ FUNÇÕES OTIMISTAS CORRIGIDAS ⬇⬇⬇ ---
   
-  // (toggleWishlist, increaseQty, decreaseQty, removeFromCart - Sem mudanças)
-  // ... (elas já são otimistas e rápidas)
   const toggleWishlist = (id) => {
     const product = products.find(p => p.id === id);
     if (!product) return;
@@ -47,7 +45,8 @@ export const CartProvider = ({ children }) => {
     
     setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
     
-    axios.put(`${API_URL}/${id}`, updatedProduct) // API
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
       .catch(err => {
         console.error("ERRO: Falha ao atualizar wishlist:", err);
         setProducts(originalProducts); // Reverte
@@ -63,7 +62,8 @@ export const CartProvider = ({ children }) => {
 
     setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
     
-    axios.put(`${API_URL}/${id}`, updatedProduct) // API
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
       .catch(err => {
         console.error("ERRO: Falha ao aumentar qtd:", err);
         setProducts(originalProducts); // Reverte
@@ -79,7 +79,8 @@ export const CartProvider = ({ children }) => {
 
     setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
     
-    axios.put(`${API_URL}/${id}`, updatedProduct) // API
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
       .catch(err => {
         console.error("ERRO: Falha ao diminuir qtd:", err);
         setProducts(originalProducts); // Reverte
@@ -94,7 +95,8 @@ export const CartProvider = ({ children }) => {
 
     setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p)); // UI
     
-    axios.put(`${API_URL}/${id}`, updatedProduct) // API
+    // CORRIGIDO: Usa api.put()
+    api.put(`/produtos/${id}`, updatedProduct) // API
       .catch(err => {
         console.error("ERRO: Falha ao remover do carrinho:", err);
         setProducts(originalProducts); // Reverte
@@ -102,65 +104,105 @@ export const CartProvider = ({ children }) => {
   };
 
 
-  // --- FUNÇÕES DE LIMPEZA (AGORA OTIMISTAS) ---
+  // --- FUNÇÕES DE LIMPEZA (CORRIGIDAS) ---
   
-  // <-- 'clearCart' OTIMISTA (CORRIGIDA) -->
   const clearCart = () => {
-    const originalProducts = [...products]; // Backup para reverter em caso de erro
+    const originalProducts = [...products];
     
-    // 1. ATUALIZA A TELA IMEDIATAMENTE
     const updatedProducts = products.map(p =>
       p.qtdCarrinho > 0 ? { ...p, qtdCarrinho: 0, presenteCarrinho: false } : p
     );
     setProducts(updatedProducts);
-    setIsUpdating(true); // Mostra o spinner
+    setIsUpdating(true);
 
-    // 2. MANDA PARA A API EM SEGUNDO PLANO
     const itemsToClear = originalProducts.filter(p => p.qtdCarrinho > 0);
     const clearPromises = itemsToClear.map(item => {
       const updatedItem = { ...item, qtdCarrinho: 0, presenteCarrinho: false };
-      return axios.put(`${API_URL}/${item.id}`, updatedItem);
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedItem);
     });
 
     Promise.all(clearPromises)
       .catch(err => {
         console.error("Erro ao limpar o carrinho:", err);
-        // 3. DESFAZ a mudança se a API falhar
         setProducts(originalProducts); 
         setError(new Error("Não foi possível limpar o carrinho."));
       })
       .finally(() => {
-        setIsUpdating(false); // Para o spinner
+        setIsUpdating(false);
       });
   };
 
-  // <-- 'clearWishlist' OTIMISTA (CORRIGIDA) -->
   const clearWishlist = () => {
-    const originalProducts = [...products]; // Backup para reverter
+    const originalProducts = [...products];
     
-    // 1. ATUALIZA A TELA IMEDIATAMENTE
     const updatedProducts = products.map(p =>
       p.presenteListaDesejos === true ? { ...p, presenteListaDesejos: false } : p
     );
     setProducts(updatedProducts);
-    setIsUpdating(true); // Mostra o spinner
+    setIsUpdating(true);
 
-    // 2. MANDA PARA A API EM SEGUNDO PLANO
     const itemsToClear = originalProducts.filter(p => p.presenteListaDesejos === true);
     const clearPromises = itemsToClear.map(item => {
       const updatedItem = { ...item, presenteListaDesejos: false };
-      return axios.put(`${API_URL}/${item.id}`, updatedItem);
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedItem);
     });
 
     Promise.all(clearPromises)
       .catch(err => {
         console.error("Erro ao limpar a wishlist:", err);
-        // 3. DESFAZ a mudança se a API falhar
         setProducts(originalProducts); 
         setError(new Error("Não foi possível limpar seus favoritos."));
       })
       .finally(() => {
-        setIsUpdating(false); // Para o spinner
+        setIsUpdating(false);
+      });
+  };
+
+  // --- FUNÇÃO DE FINALIZAR COMPRA (JÁ CORRIGIDA) ---
+  const finalizePurchase = (itemsPurchased) => {
+    const originalProducts = [...products];
+    setIsUpdating(true);
+
+    const purchasedIds = new Set(itemsPurchased.map(item => item.id));
+
+    const updatedProducts = products.map(p => {
+      if (purchasedIds.has(p.id)) {
+        return {
+          ...p,
+          presenteCarrinho: false,
+          qtdCarrinho: 0,
+          presenteListaDesejos: false,
+          presentePedido: true,
+          qtdPedido: p.qtdCarrinho
+        };
+      }
+      return p;
+    });
+    setProducts(updatedProducts);
+
+    const purchasePromises = itemsPurchased.map(item => {
+      const updatedPayload = {
+        ...item,
+        presenteCarrinho: false,
+        qtdCarrinho: 0,
+        presenteListaDesejos: false,
+        presentePedido: true,
+        qtdPedido: item.qtdCarrinho
+      };
+      // CORRIGIDO: Usa api.put()
+      return api.put(`/produtos/${item.id}`, updatedPayload);
+    });
+
+    Promise.all(purchasePromises)
+      .catch(err => {
+        console.error("ERRO: Falha ao finalizar a compra de produtos:", err);
+        setProducts(originalProducts); 
+        setError(new Error("Não foi possível registrar seus produtos comprados."));
+      })
+      .finally(() => {
+        setIsUpdating(false);
       });
   };
 
@@ -187,6 +229,7 @@ export const CartProvider = ({ children }) => {
         toggleWishlist,
         clearCart,
         clearWishlist,
+        finalizePurchase
       }}
     >
       {children}

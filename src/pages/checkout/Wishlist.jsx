@@ -1,67 +1,45 @@
+// src/pages/Wishlist.jsx
 import React from 'react';
-import { useCart } from "../../context/CartContext";
+import { useCart } from '../../context/CartContext';
+import ProductCard from '../../components/product/ProductCard.jsx';
+// Importe o CSS que define a grid (provavelmente o Catalog.css)
+import '../Catalog.css'; 
 
 export default function Wishlist() {
-  // 1. Pega o 'clearWishlist' e o 'isUpdating'
   const { 
-    wishlistItems, 
-    toggleWishlist, 
-    increaseQty,
-    isLoading,
+    wishlistItems, // <-- Pega SOMENTE os itens da wishlist
+    isLoading, 
     error,
-    clearWishlist,  // <-- Pega a nova função
-    isUpdating      // <-- Pega o estado de "carregando"
+    increaseQty,
+    toggleWishlist
   } = useCart();
 
-  if (isLoading) {
-    return <p>Carregando favoritos...</p>;
+  if (isLoading) { 
+    return <p>Carregando sua lista de desejos...</p>;
   }
-
-  if (error) {
+  if (error) { 
     return <p>Erro ao carregar: {error.message}</p>;
   }
 
   return (
-    <div>
-      <h2>❤️ Meus Favoritos</h2>
-      {wishlistItems.length === 0 ? (
-        <p>Você ainda não favoritou nenhum produto.</p>
-      ) : (
-        <>
-          {/* 2. Adiciona o botão "Limpar Favoritos" */}
-          <button 
-            className="clear-wishlist-btn"
-            onClick={clearWishlist}
-            disabled={isUpdating} // Desativa se 'isUpdating' for true
-          >
-            {isUpdating ? 'Limpando...' : 'Limpar Favoritos'}
-          </button>
-          
-          <hr /> 
-
-          {wishlistItems.map((item) => (
-            <div key={item.id} className="wishlist-item">
-              <h4>{item.name}</h4>
-              
-              {/* 3. Desativa o botão individual */}
-              <button 
-                onClick={() => increaseQty(item.id)} 
-                disabled={isUpdating} 
-              >
-                Adicionar ao Carrinho
-              </button>
-              
-              {/* 4. Desativa o botão individual */}
-              <button 
-                onClick={() => toggleWishlist(item.id)} 
-                disabled={isUpdating} 
-              >
-                Remover ❤️
-              </button>
-            </div>
-          ))}
-        </>
-      )}
+    <div className="catalog-container"> {/* Reutiliza a classe do catálogo */}
+      <h1>💖 Minha Lista de Desejos</h1>
+      
+      <div className="product-grid"> {/* Reutiliza a classe do catálogo */}
+        {wishlistItems.length > 0 ? (
+          wishlistItems.map((product) => (
+            <ProductCard 
+              key={product.id} 
+              product={product}
+              onAddToCart={() => increaseQty(product.id)}
+              onToggleWishlist={() => toggleWishlist(product.id)}
+              variant="wishlist" // <-- PASSA A VARIANTE AQUI
+            />
+          ))
+        ) : (
+          <p>Sua lista de desejos está vazia.</p>
+        )}
+      </div>
     </div>
   );
 }

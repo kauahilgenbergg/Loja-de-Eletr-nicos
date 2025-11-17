@@ -1,0 +1,134 @@
+/* Container principal do formulário */
+.checkout-form-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 500px; /* Define uma largura máxima */
+  margin: 20px auto; /* Centraliza o formulário */
+}
+
+.checkout-form-container h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+/* Grid para as opções de pagamento */
+.payment-options-grid {
+  display: grid;
+  /* Cria 3 colunas de tamanho igual, com espaçamento */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px; /* Espaço entre os "cards" */
+  margin-top: 20px;
+}
+
+/* O "Cartão" de opção de pagamento (nosso botão bonito) */
+.payment-option-card {
+  background-color: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 10px;
+  
+  /* Alinha ícone e texto verticalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  cursor: pointer;
+  text-align: center;
+  font-size: 1rem; /* Tamanho da fonte legível */
+  font-weight: 500;
+  color: #444;
+  
+  /* Transição suave para hover */
+  transition: all 0.2s ease-in-out;
+}
+
+.payment-option-card:hover:not(:disabled) {
+  /* Destaca ao passar o mouse */
+  border-color: #007bff; /* Cor primária (azul) */
+  transform: translateY(-3px); /* Efeito de "levantar" */
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
+}
+
+.payment-option-card:focus-visible {
+  /* Melhora a acessibilidade para navegação com teclado */
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Estilo para o estado desabilitado */
+.payment-option-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+}
+
+/* Ícone (emoji) dentro do card */
+.payment-icon {
+  font-size: 2.5rem; /* Ícone grande e claro */
+  margin-bottom: 12px;
+  /* Evita que o ícone mude de tamanho com o texto */
+  line-height: 1; 
+}
+
+/* Texto dentro do card */
+.payment-label {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* --- Estilos do Indicador de Carregamento --- */
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Animação do Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3; /* Círculo base */
+  border-top: 3px solid #007bff; /* Cor da animação */
+  border-radius: 50%;
+  margin-right: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- Responsividade para Telas Pequenas --- */
+@media (max-width: 480px) {
+  .payment-options-grid {
+    /* Em telas pequenas, as opções ficam em uma única coluna */
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .payment-option-card {
+    /* Em vez de coluna, alinha lado a lado */
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 16px;
+  }
+
+  .payment-icon {
+    font-size: 2rem;
+    margin-bottom: 0;
+    margin-right: 16px;
+  }
+
+  .payment-label {
+    font-size: 1rem;
+    text-align: left;
+  }
+}

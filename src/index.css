@@ -5,7 +5,9 @@
 
   color-scheme: light;
   color: #213547;
-  background-color: #ffffff;
+
+  /* REMOVE o background daqui pra não brigar com o body */
+  /* background-color: #ffffff; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,6 +28,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+
+  /* COR PADRÃO DA PÁGINA TODA */
+  background-color: #f9f9f9;
 }
 
 h1 {
@@ -55,7 +60,6 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
   }
   a:hover {
     color: #747bff;
@@ -64,19 +68,24 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-/* src/index.css */
 
-/* 1. Reseta todas as margens e paddings do navegador */
+/* --------------------- */
+/* RESET + AJUSTES GLOBAIS */
+/* --------------------- */
+
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /* Garante que padding não aumente o tamanho */
+  box-sizing: border-box;
 }
 
-/* 2. Faz a aplicação ocupar 100% da altura da tela */
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f9f9f9; /* Um fundo cinza bem claro */
+
+  /* GARANTE QUE TUDO, ABSOLUTAMENTE TUDO, USE A MESMA COR */
+  background-color: #f9f9f9;
   color: #333;
 }
