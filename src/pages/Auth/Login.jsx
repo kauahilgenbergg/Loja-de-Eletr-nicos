@@ -30,7 +30,8 @@ function Login() {
             if (response.data.length > 0) {
                 const foundUser = response.data[0];
                 
-                auth.login(foundUser); // Salva o usuário no Contexto
+                // Chama o login do context com o usuário encontrado
+                auth.login(foundUser); 
 
                 alert('Login realizado com sucesso!');
                 navigate('/home'); // Redireciona para a home
@@ -52,26 +53,25 @@ function Login() {
             <form className="auth-form" onSubmit={handleSubmit}>
                 <h2>Login</h2>
                 
-                {/* ... (o resto do seu JSX continua igual) ... */}
                 <div className="form-group">
                   <label htmlFor="email">Email</label>
                   <input 
-                      type="email" 
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required 
+                    type="email" 
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="password">Senha</label>
                   <input 
-                      type="password" 
-                      id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required 
+                    type="password" 
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
                   />
                 </div>
 

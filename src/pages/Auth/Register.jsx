@@ -76,58 +76,56 @@ function Register() {
             <form className="auth-form" onSubmit={handleSubmit}>
                 <h2>Criar Conta</h2>
                 
-                {/* O resto do seu JSX (inputs e botões) não muda */}
-
                 <div className="form-group">
                   <label htmlFor="name">Nome</label>
                   <input 
-                      type="text" 
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required 
+                    type="text" 
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required 
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="email">Email</label>
                   <input 
-                      type="email" 
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required 
+                    type="email" 
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="password">Senha</label>
                   <input 
-                      type="password" 
-                      id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required 
+                    type="password" 
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="confirmPassword">Confirmar Senha</label>
                   <input 
-                      type="password" 
-                      id="confirmPassword"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required 
+                    type="password" 
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required 
                   />
                 </div>
 
                 <button type="submit" className="auth-button" disabled={isSubmitting}>
                     {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
                 </button>
-
-                <p className="auth-link">
-                    Já tem uma conta? <Link to="/login">Faça Login</Link>
+                
+                <p className="auth-switch">
+                  Já tem uma conta? <Link to="/login">Faça o Login</Link>
                 </p>
             </form>
         </div>
