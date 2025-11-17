@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column; /* Organiza Header, Main e Footer em uma coluna */
   min-height: 100vh; /* Altura mínima de 100% da tela */
+  background-color: #f5f8fc; /* Um fundo suave */
 }
 
 /* 2. Esta é a parte mais importante! */
