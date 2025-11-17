@@ -11,11 +11,24 @@
 
 .auth-layout {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: var(--auth-background-color);
   padding: 2rem;
+  gap: 2rem;
+}
+
+.auth-company-header {
+  text-align: center;
+}
+
+.auth-company-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--auth-text-color);
+  margin: 0;
 }
 
 .auth-container {
