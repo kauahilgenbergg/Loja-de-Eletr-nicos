@@ -1,88 +1,135 @@
+// src/pages/Auth/Register.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
+import './Auth.css'; 
 import { api } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
-import './Auth.css';
 
 function Register() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  
-  const auth = useAuth();
-  const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsSubmitting(true); 
 
-    try {
-      const checkUser = await api.get(`/users?email=${email}`);
-      if (checkUser.data.length > 0) {
-        setError('Este email já está cadastrado.');
-        return;
-      }
+        if (password !== confirmPassword) {
+            alert("As senhas não são iguais!");
+            setIsSubmitting(false); 
+            return;
+        }
 
-      const response = await api.post('/users', { name, email, password });
-      
-      auth.login(email, password);
+        try {
+            // Passo 1: Verificar se o e-mail já existe
+            const checkResponse = await api.get('/usuario', {
+                params: { email: email }
+            });
 
-    } catch (err) {
-      setError('Falha ao cadastrar. Tente novamente.');
-      console.error(err);
-    }
-  };
+            if (checkResponse.data.length > 0) {
+                alert('Este e-mail já está cadastrado.');
+                setIsSubmitting(false);
+                return;
+            }
 
-  return (
-    <div className="auth-container">
-      <form onSubmit={handleSubmit}>
-        <h2>Cadastre-se</h2>
-        
-        {error && <p className="auth-error">{error}</p>}
+            const userData = { 
+                name: name, 
+                email: email, 
+                password: password,
+                
+                // Avatar padrão
+                imagem: "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-vetor.jpg",
+                
+                // Campos de endereço/pagamento vazios
+                rua: "",
+                numero: "",
+                bairro: "",
+                telefone: "",
+                formaPagamento: "",
 
-        <div className="form-group">
-          <label htmlFor="name">Nome</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+                // --- MUDANÇA AQUI ---
+                // Tipo fixo como "usuario", como solicitado
+                tipo: "usuario"
+                // --- FIM DA MUDANÇA ---
+            };
+
+            // Passo 2: Se não existir, criar o usuário
+            const response = await api.post('/usuario', userData);
+
+            console.log('Usuário cadastrado:', response.data);
+            alert('Cadastro realizado com sucesso!');
+            navigate('/login'); 
+
+        } catch (error) {
+            console.error('Erro no cadastro:', error);
+            const errorMsg = error.response?.data?.message || error.message;
+            alert(`Erro ao cadastrar: ${errorMsg}`);
+        } finally {
+            setIsSubmitting(false); 
+        }
+    };
+
+    return (
+        <div className="auth-container">
+            <form className="auth-form" onSubmit={handleSubmit}>
+                <h2>Criar Conta</h2>
+                
+                <div className="form-group">
+                  <label htmlFor="name">Nome</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="password">Senha</label>
+                  <input 
+                    type="password" 
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">Confirmar Senha</label>
+                  <input 
+                    type="password" 
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required 
+                  />
+                </div>
+
+                <button type="submit" className="auth-button" disabled={isSubmitting}>
+                    {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
+                </button>
+                
+                <p className="auth-switch">
+                  Já tem uma conta? <Link to="/login">Faça o Login</Link>
+                </p>
+            </form>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-          />
-        </div>
-        
-        <button type="submit" className="auth-button">Criar Conta</button>
-
-        <p className="auth-switch">
-          Já tem uma conta? <Link to="/login">Faça o Login</Link>
-        </p>
-      </form>
-    </div>
-  );
+    );
 }
 
 export default Register;

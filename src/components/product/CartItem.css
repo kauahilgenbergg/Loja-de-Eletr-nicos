@@ -1,35 +1,40 @@
-/* Container principal de cada item no carrinho */
+/* src/components/product/CartItem.css */
+/* (Nome corrigido e estilos refinados) */
+
 .cart-item {
   display: flex;
-  align-items: center; /* Alinha a imagem e os detalhes verticalmente */
   padding: 1.5rem;
-  margin-bottom: 1rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  gap: 1.5rem; /* Espaço entre a imagem e os detalhes */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  gap: 1.5rem;
+  transition: box-shadow 0.2s ease-in-out;
 }
 
-/* Imagem do produto */
+.cart-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 .cart-item img {
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px; /* Bordas levemente arredondadas */
+  border: 1px solid #f0f0f0;
 }
 
-/* Container dos detalhes (nome, preço, controles) */
 .item-details {
-  flex-grow: 1; /* Faz esta div ocupar o espaço restante */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Espaço entre os textos (nome, preço, etc) */
+  gap: 0.25rem; /* Espaço menor entre os textos */
 }
 
 .item-details h4 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.15rem; /* Um pouco menor para mais elegância */
+  font-weight: 600; /* Um pouco mais de peso */
   color: #333;
 }
 
@@ -39,42 +44,47 @@
   color: #555;
 }
 
-/* Estiliza o "Subtotal: R$ XX.XX" */
+/* Subtotal */
 .item-details p:last-of-type {
   font-weight: bold;
   color: #000;
+  margin-top: 0.5rem; /* Dá um espaço antes do subtotal */
 }
 
-/* Container dos botões + e - e a quantidade */
+/* --- Controles de Quantidade Modernizados --- */
 .quantity-controls {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Espaço entre os botões e o número */
-  margin-top: 0.5rem;
+  gap: 0.5rem; /* Espaço entre botões e número */
+  margin-top: 0.75rem;
 }
 
-/* Botões de + e - */
 .quantity-controls button {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ccc;
-  border-radius: 50%; /* Botões redondos */
-  background-color: #f9f9f9;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 6px; /* Quadrado com bordas arredondadas */
+  background-color: #fdfdfd;
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 .quantity-controls button:hover {
-  background-color: #eee;
+  background-color: #f0f0f0;
+  border-color: #ccc;
 }
 
-/* Número da quantidade */
 .quantity-controls span {
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 500;
+  padding: 0 0.5rem;
   min-width: 20px;
   text-align: center;
 }
@@ -83,17 +93,17 @@
 .remove-btn {
   background: none;
   border: none;
-  color: #d9534f; /* Cor vermelha para "perigo" */
+  color: #d9534f;
   font-size: 0.9rem;
   font-weight: bold;
   cursor: pointer;
   padding: 0;
-  margin-top: 0.5rem;
-  text-align: left; /* Alinha com o resto do texto */
-  width: fit-content; /* Faz o botão ter o tamanho do texto */
+  margin-top: 0.75rem;
+  text-align: left;
+  width: fit-content;
 }
 
 .remove-btn:hover {
   text-decoration: underline;
-  color: #a94442; /* Vermelho mais escuro */
+  color: #a94442;
 }
