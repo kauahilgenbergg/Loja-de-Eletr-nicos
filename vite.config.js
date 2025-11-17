@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://6911d4cb52a60f10c81f7179.mockapi.io',
+        target: 'https://690d0786a6d92d83e8504357.mockapi.io/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
