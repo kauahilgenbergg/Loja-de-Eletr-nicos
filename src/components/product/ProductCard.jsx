@@ -1,10 +1,9 @@
+// src/components/product/ProductCard.jsx
 import React from 'react';
 import "./ProductCard.css";
 
 /**
  * Função auxiliar para limpar o preço.
- * Copiada do Catalog.jsx para garantir que o preço seja
- * exibido corretamente.
  */
 const parsePrice = (price) => {
   if (typeof price === 'number') {
@@ -18,18 +17,21 @@ const parsePrice = (price) => {
     .replace("R$", "")     
     .replace(/\./g, "")    
     .replace(",", ".")     
-    .trim();               
+    .trim();                
     
   const number = parseFloat(cleanString);
   return isNaN(number) ? 0 : number;
 };
 
 
-export default function ProductCard({ product, onAddToCart, onToggleWishlist }) {
+export default function ProductCard({ 
+  product, 
+  onAddToCart, 
+  onToggleWishlist,
+  variant = 'catalog' // <-- 1. ADICIONE ESTA PROP
+}) {
 
   const isFav = product.presenteListaDesejos;
-
-  // 1. CORREÇÃO: Usar a função parsePrice antes do .toFixed()
   const price = parsePrice(product.preco).toFixed(2);
 
   return (
@@ -38,15 +40,34 @@ export default function ProductCard({ product, onAddToCart, onToggleWishlist }) 
       
       <h4>{product.name}</h4>
       
-      {/* 2. O 'price' agora está formatado corretamente */}
-      <p>R$ {price.replace(".", ",")}</p> {/* Opcional: troca ponto por vírgula na exibição */}
+      <p>R$ {price.replace(".", ",")}</p>
       
       <div className="actions">
-        <button onClick={onAddToCart}>🛒 Adicionar</button>
+        {/* 2. ADICIONE UMA CLASSE AO BOTÃO DE ADICIONAR */}
+        <button className="add-to-cart-btn" onClick={onAddToCart}>🛒 Adicionar</button>
         
-        <button onClick={onToggleWishlist}>
-          {isFav ? "❤️" : "🤍"} 
-        </button>
+        {/* --- 3. ATUALIZE A LÓGICA DO BOTÃO DE FAVORITO --- */}
+        {variant === 'catalog' ? (
+          // Versão do Catálogo (coração normal)
+          <button 
+            className={`wishlist-btn ${isFav ? 'active' : ''}`} 
+            onClick={onToggleWishlist}
+            title="Adicionar aos Favoritos"
+          >
+            {isFav ? "❤️" : "🤍"} 
+          </button>
+        ) : (
+          // Versão da Wishlist (coração partido para remover)
+          <button 
+            className="wishlist-btn remove" 
+            onClick={onToggleWishlist}
+            title="Remover dos Favoritos"
+          >
+            💔
+          </button>
+        )}
+        {/* --- FIM DAS MUDANÇAS --- */}
+
       </div>
     </div>
   );
