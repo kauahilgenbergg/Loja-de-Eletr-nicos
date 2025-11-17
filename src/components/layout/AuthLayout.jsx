@@ -2,17 +2,12 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import '../../pages/Auth/Auth.css'; 
 
-function AuthLayout() {
+const AuthLayout = () => {
   return (
-    <div className="auth-layout"> 
-      
-      <div className="auth-company-header">
-        <h1>Eritrônicos</h1> 
-      </div>
-
+    <div className="auth-container">
       <Outlet />
     </div>
   );
-}
+};
 
 export default AuthLayout;

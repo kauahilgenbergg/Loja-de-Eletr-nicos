@@ -7,6 +7,7 @@ import AddressForm from './AddressForm.jsx';
 import PaymentForm from './PaymentForm.jsx';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
+import CheckoutSuccess from './CheckoutSuccess';
 
 // Importe o novo CSS para a página do carrinho
 import './Cart.css';
@@ -27,8 +28,22 @@ export default function Cart() {
   const [isPersistingData, setIsPersistingData] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
 
-  // ... (Toda a lógica de handleGoToPayment, handleCompleteOrder, etc. continua IGUAL) ...
-  // --- INÍCIO DA LÓGICA (SEM MUDANÇAS) ---
+  // -----------------------------------------
+  // 👉 VERIFICAÇÃO DE LOGIN
+  // -----------------------------------------
+  const handleStartCheckout = () => {
+    setCheckoutError(''); // Limpa erros anteriores
+
+    if (!user) {
+      setCheckoutError('Você precisa estar logado para finalizar a compra. Por favor, faça o login.');
+      // Opcional: rola a tela para o topo para o usuário ver o erro
+      window.scrollTo(0, 0); 
+      return; // Para a execução aqui
+    }
+  
+    // Se o usuário existir, avança para o endereço
+    setCheckoutStep('address');
+  };
 
   // -----------------------------------------
   // 👉 ETAPA 1 — Endereço → Pagamento
@@ -91,26 +106,12 @@ export default function Cart() {
     )
   );
 
-  // --- FIM DA LÓGICA (SEM MUDANÇAS) ---
-
 
   // -----------------------------------------
   // 👉 ETAPA FINAL — Sucesso
   // -----------------------------------------
   if (checkoutStep === 'success') {
-    return (
-      <div className="checkout-success">
-        <h2>🎉 Pedido Realizado com Sucesso!</h2>
-        <p>Obrigado pela sua compra.</p>
-        <p><strong>Seu pedido será entregue ainda hoje.</strong></p>
-
-        {orderDetails && (
-          <p>
-            Endereço: {orderDetails.rua}, {orderDetails.numero} — {orderDetails.bairro}
-          </p>
-        )}
-      </div>
-    );
+    return <CheckoutSuccess orderDetails={orderDetails} />;
   }
 
   // -----------------------------------------
@@ -150,11 +151,15 @@ export default function Cart() {
     <div className="cart-page-container">
       <h1>🛒 Meu Carrinho</h1>
 
+      {/* ✅ ESTA É A CORREÇÃO QUE FIZEMOS:
+          'renderError()' está aqui, logo após o <h1>
+          e ANTES do 'cartItems.length === 0 ? ...'
+      */}
+      {renderError()}
+
       {cartItems.length === 0 ? (
         <div className="cart-empty">
           <p>Seu carrinho está vazio.</p>
-          {/* Opcional: Adicionar um botão para voltar às compras */}
-          {/* <Link to="/" className="continue-shopping-btn">Continuar comprando</Link> */}
         </div>
       ) : (
         <div className="cart-content-wrapper">
@@ -177,12 +182,6 @@ export default function Cart() {
               <span>Subtotal ({cartItems.length} {cartItems.length > 1 ? 'itens' : 'item'})</span>
               <span>R$ {cartSubtotal.toFixed(2)}</span>
             </div>
-
-            {/* Você pode adicionar frete aqui se quiser */}
-            {/* <div className="summary-row">
-              <span>Frete</span>
-              <span>Grátis</span>
-            </div> */}
             
             <div className="summary-row total">
               <span>Total</span>
@@ -191,7 +190,7 @@ export default function Cart() {
 
             <button
               className="checkout-start-btn"
-              onClick={() => setCheckoutStep('address')}
+              onClick={handleStartCheckout}
               disabled={isUpdating}
             >
               {isUpdating ? 'Aguarde...' : 'Finalizar Pedido 💸'}

@@ -1,47 +1,34 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { api } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // <-- ADICIONADO
+import api from '../services/api'; // <-- ADICIONADO (verifique se o caminho para seu 'api' está correto)
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // RESOLVIDO: Usando o inicializador "lazy" do localStorage (da branch 'develop')
+  // Ao iniciar, tente carregar o usuário do localStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('loggedInUser');
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  
+  const navigate = useNavigate(); // <-- ADICIONADO
 
-  // RESOLVIDO: Mantendo o 'useNavigate' (da branch 'login'), necessário para o logout
-  const navigate = useNavigate();
-
-  // Este useEffect é um código comum que estava em ambas as branches
-  useEffect(() => {
-    const storedUser = localStorage.getItem('loggedInUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  // RESOLVIDO: Função 'login' modificada para se alinhar com a lógica da branch 'develop'
-  // Ela agora recebe o objeto do usuário, em vez de fazer a chamada da API.
-  const login = (userObject) => {
-    localStorage.setItem('loggedInUser', JSON.stringify(userObject));
-    setUser(userObject);
-    // A navegação agora é feita pelo próprio componente Login.jsx
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('loggedInUser', JSON.stringify(userData));
   };
 
-  // Função 'logout' (código comum)
   const logout = () => {
     setUser(null);
     localStorage.removeItem('loggedInUser');
-    navigate('/login');
+    navigate('/login'); // <-- Mantido da branch 'login'
   };
 
   // Função 'updateUser' (da branch 'login')
   // RESOLVIDO: Endpoint ajustado de '/users' para '/usuario' para consistência
   const updateUser = async (newData) => {
-       try {
+      try {
       // Usando '/usuario/' para ser consistente com Login e Register
       const response = await api.put(`/usuario/${user.id}`, newData);
       
@@ -74,14 +61,13 @@ export function AuthProvider({ children }) {
   };
   // --- FIM DA FUNÇÃO NOVA ---
 
-  // RESOLVIDO: O 'value' agora expõe as funções de ambas as branches
   const value = {
     user,
     isLoggedIn: !!user,
-    login, // A nova função login(userObject)
+    login,
     logout,
-    updateUser, // Da branch 'login'
-    updateUserContext // Da branch 'develop'
+    updateUser, // <-- Expondo a função da API
+    updateUserContext // <-- Expondo a função local
   };
 
   return (

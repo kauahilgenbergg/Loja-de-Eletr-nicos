@@ -1,7 +1,11 @@
 .app-footer {
-  /* Faz o rodapé 'grudar' no final da página */
-  margin-top: auto;
-  
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%; /* Garante que ocupe toda a largura */
+  z-index: 1000; /* Garante que fique por cima de outros conteúdos */
+
+  /* Estilos que você já tinha */
   background-color: #222;
   color: #ccc;
   padding: 0.05rem 1rem;

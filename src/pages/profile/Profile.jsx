@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
+// --- FUNÇÃO AUXILIAR ---
+// Adicionada para formatar o telefone, pois estava sendo usada
+// mas não definida no código original.
 const formatPhone = (value) => {
-  let v = (value || '').replace(/\D/g, '');
-  v = v.substring(0, 11);
-  v = v.replace(/^(\d{2})/, '($1) ');
-  v = v.replace(/(\d{5})(\d{1,4})/, '$1-$2');
-  return v;
+  if (!value) return '';
+  value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
+  value = value.replace(/^(\d{2})(\d)/g, '($1) $2'); // Coloca parênteses nos dois primeiros dígitos
+  value = value.replace(/(\d{5})(\d)/, '$1-$2'); // Coloca hífen depois dos 5 primeiros dígitos (para celular)
+  return value.slice(0, 15); // Limita ao tamanho (XX) XXXXX-XXXX
 };
+// --- FIM DA FUNÇÃO AUXILIAR ---
+
 
 function Profile() {
   const auth = useAuth();
@@ -43,10 +48,13 @@ function Profile() {
         bairro: auth.user.bairro || '',
       });
     }
+    // A dependência 'isEditing' garante que, se o usuário cancelar a edição,
+    // os dados do formulário sejam redefinidos para os valores originais do 'auth.user'.
   }, [auth.user, isEditing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Formata o telefone em tempo real
     const finalValue = name === 'telefone' ? formatPhone(value) : value;
 
     setFormData((prev) => ({
@@ -61,16 +69,17 @@ function Profile() {
 
     try {
       if (auth.updateUser) {
+        // Prepara os dados para salvar, removendo a formatação do telefone
         const dataToSave = {
           name: formData.name,
-          telefone: formData.telefone.replace(/\D/g, ''),
+          telefone: formData.telefone.replace(/\D/g, ''), // Salva apenas os números
           rua: formData.rua,
           numero: formData.numero,
           bairro: formData.bairro,
         };
 
         await auth.updateUser(dataToSave);
-        setIsEditing(false);
+        setIsEditing(false); // Volta para o modo de visualização
       } else {
         console.error("Função 'updateUser' não definida no AuthContext!");
       }
@@ -83,13 +92,16 @@ function Profile() {
 
   const handleCancel = () => {
     setIsEditing(false);
+    // O useEffect [auth.user, isEditing] será disparado e reverterá os dados
   };
 
+  // Guard Clause: Redireciona se não estiver logado
   if (!auth.isLoggedIn) {
     navigate('/login');
-    return null;
+    return null; // Retorna null para evitar renderizar o restante
   }
 
+  // Guard Clause: Mostra 'Carregando' se o usuário ainda não foi carregado
   if (!auth.user) {
     return <p>Carregando dados...</p>;
   }
@@ -98,12 +110,14 @@ function Profile() {
     <div className="profile-content-wrapper">
       <main className="profile-content">
 
+        {/* MODO DE VISUALIZAÇÃO */}
         {!isEditing ? (
           <div className="profile-card-details">
             <h2>Perfil do Usuário</h2>
 
             <div><strong>Nome:</strong> {auth.user.name}</div>
             <div><strong>Email:</strong> {auth.user.email}</div>
+            {/* Usamos o formData.telefone para mostrar o valor formatado */}
             <div><strong>Telefone:</strong> {formData.telefone || "(Não informado)"}</div>
 
             <div><strong>Rua:</strong> {formData.rua || "(Não informado)"}</div>
@@ -120,6 +134,7 @@ function Profile() {
             </div>
           </div>
         ) : (
+          /* MODO DE EDIÇÃO */
           <div className="profile-card-details">
             <h2>Editar Perfil</h2>
 
