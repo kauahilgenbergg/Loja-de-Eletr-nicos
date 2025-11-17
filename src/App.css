@@ -9,11 +9,21 @@
 
 /* 2. Esta é a parte mais importante! */
 .app-content {
-  flex: 1; /* Faz o conteúdo principal "crescer" e empurrar o rodapé para baixo */
-  
-  /* Adiciona um padding para o conteúdo não colar nas laterais */
+  /* Estilos que você já tinha */
+  flex: 1; /* Não é mais 'crítico' para o layout, mas pode ficar */
   width: 100%;
-  max-width: 1200px; /* Largura máxima para o conteúdo */
-  margin: 0 auto; /* Centraliza o conteúdo */
-  padding: 2rem; /* Espaçamento interno do conteúdo */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem; /* Define o padding base (ex: 32px) */
+
+  /* * A MÁGICA ACONTECE AQUI:
+   * Nós substituímos o padding-top e padding-bottom
+   * para compensar os elementos fixos.
+   */
+
+  /* Assumindo que seu Header tem 70px de altura */
+  padding-top: calc(70px + 2rem); 
+
+  /* Assumindo que seu Footer tem 70px de altura */
+  padding-bottom: calc(70px + 2rem);
 }
