@@ -41,12 +41,7 @@ export function AuthProvider({ children }) {
   // Função 'updateUser' (da branch 'login')
   // RESOLVIDO: Endpoint ajustado de '/users' para '/usuario' para consistência
   const updateUser = async (newData) => {
-    if (!user || !user.id) {
-      console.error("Usuário não encontrado para atualizar");
-      throw new Error("Usuário não autenticado");
-    }
-
-    try {
+       try {
       // Usando '/usuario/' para ser consistente com Login e Register
       const response = await api.put(`/usuario/${user.id}`, newData);
       

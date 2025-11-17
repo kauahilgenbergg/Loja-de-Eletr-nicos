@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
-import './Profile.css'; 
+import './Profile.css';
 
 const formatPhone = (value) => {
   let v = (value || '').replace(/\D/g, '');
@@ -14,16 +14,22 @@ const formatPhone = (value) => {
 function Profile() {
   const auth = useAuth();
   const navigate = useNavigate();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: '', email: '', telefone: '', endereco: '',
+    name: '',
+    email: '',
+    telefone: '',
+    rua: '',
+    numero: '',
+    bairro: '',
   });
 
   const handleLogout = () => {
-    auth.logout(); 
-    navigate('/login'); 
+    auth.logout();
+    navigate('/login');
   };
 
   useEffect(() => {
@@ -32,7 +38,9 @@ function Profile() {
         name: auth.user.name || '',
         email: auth.user.email || '',
         telefone: formatPhone(auth.user.telefone || ''),
-        endereco: auth.user.endereco || '',
+        rua: auth.user.rua || '',
+        numero: auth.user.numero || '',
+        bairro: auth.user.bairro || '',
       });
     }
   }, [auth.user, isEditing]);
@@ -40,25 +48,34 @@ function Profile() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     const finalValue = name === 'telefone' ? formatPhone(value) : value;
-    setFormData(prevState => ({ ...prevState, [name]: finalValue }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: finalValue,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
       if (auth.updateUser) {
         const dataToSave = {
-          ...formData,
+          name: formData.name,
           telefone: formData.telefone.replace(/\D/g, ''),
+          rua: formData.rua,
+          numero: formData.numero,
+          bairro: formData.bairro,
         };
-        await auth.updateUser(dataToSave); 
-        setIsEditing(false); 
+
+        await auth.updateUser(dataToSave);
+        setIsEditing(false);
       } else {
         console.error("Função 'updateUser' não definida no AuthContext!");
       }
     } catch (error) {
-      console.error("Erro ao atualizar o perfil:", error);
+      console.error('Erro ao atualizar o perfil:', error);
     } finally {
       setIsLoading(false);
     }
@@ -70,27 +87,30 @@ function Profile() {
 
   if (!auth.isLoggedIn) {
     navigate('/login');
-    return null; 
+    return null;
   }
+
   if (!auth.user) {
     return <p>Carregando dados...</p>;
   }
 
   return (
-    // Removido o 'profile-page-container' para simplificar o layout
-    <div className="profile-content-wrapper"> 
-      
+    <div className="profile-content-wrapper">
       <main className="profile-content">
-        
+
         {!isEditing ? (
           <div className="profile-card-details">
             <h2>Perfil do Usuário</h2>
+
             <div><strong>Nome:</strong> {auth.user.name}</div>
             <div><strong>Email:</strong> {auth.user.email}</div>
             <div><strong>Telefone:</strong> {formData.telefone || "(Não informado)"}</div>
-            <div><strong>Endereço:</strong> {formData.endereco || "(Não informado)"}</div>
-            
-            <div className="profile-actions"> {/* Novo div para os botões */}
+
+            <div><strong>Rua:</strong> {formData.rua || "(Não informado)"}</div>
+            <div><strong>Número:</strong> {formData.numero || "(Não informado)"}</div>
+            <div><strong>Bairro:</strong> {formData.bairro || "(Não informado)"}</div>
+
+            <div className="profile-actions">
               <button className="edit-button" onClick={() => setIsEditing(true)}>
                 Editar Perfil
               </button>
@@ -102,27 +122,86 @@ function Profile() {
         ) : (
           <div className="profile-card-details">
             <h2>Editar Perfil</h2>
+
             <form onSubmit={handleSubmit} className="profile-form">
+
               <div className="form-group">
                 <label htmlFor="name">Nome:</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
               </div>
+
               <div className="form-group">
                 <label htmlFor="email">Email:</label>
-                <input type="email" id="email" name="email" value={formData.email} readOnly title="O email não pode ser alterado." />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  readOnly
+                  title="O email não pode ser alterado."
+                />
               </div>
+
               <div className="form-group">
                 <label htmlFor="telefone">Telefone:</label>
-                <input type="tel" id="telefone" name="telefone" value={formData.telefone} onChange={handleChange} placeholder="(XX) XXXXX-XXXX" maxLength="15" />
+                <input
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  value={formData.telefone}
+                  onChange={handleChange}
+                  placeholder="(XX) XXXXX-XXXX"
+                  maxLength="15"
+                />
               </div>
+
               <div className="form-group">
-                <label htmlFor="endereco">Endereço:</label>
-                <input type="text" id="endereco" name="endereco" value={formData.endereco} onChange={handleChange} placeholder="Ex: Rua, Número, Cidade - UF" />
+                <label htmlFor="rua">Rua:</label>
+                <input
+                  type="text"
+                  id="rua"
+                  name="rua"
+                  value={formData.rua}
+                  onChange={handleChange}
+                  placeholder="Ex: Av. Brasil"
+                />
               </div>
+
+              <div className="form-group">
+                <label htmlFor="numero">Número:</label>
+                <input
+                  type="text"
+                  id="numero"
+                  name="numero"
+                  value={formData.numero}
+                  onChange={handleChange}
+                  placeholder="Ex: 123"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="bairro">Bairro:</label>
+                <input
+                  type="text"
+                  id="bairro"
+                  name="bairro"
+                  value={formData.bairro}
+                  onChange={handleChange}
+                  placeholder="Ex: Centro"
+                />
+              </div>
+
               <div className="form-buttons">
                 <button type="submit" className="save-button" disabled={isLoading}>
                   {isLoading ? 'Salvando...' : 'Salvar'}
                 </button>
+
                 <button type="button" className="cancel-button" onClick={handleCancel}>
                   Cancelar
                 </button>
