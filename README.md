@@ -9,6 +9,7 @@ npm install
 npm run dev
 
 A aplicação vai iniciar no endereço mostrado no terminal.
+
 🔧 Tecnologias
 
 -React
